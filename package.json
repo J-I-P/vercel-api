@@ -3,7 +3,8 @@
     "version": "1.0.0",
     "scripts": {
         "dev": "vercel dev",
-        "build": "vercel build"
+        "start": "vercel dev",
+        "build": "echo No build step required"
     }
 }
 

@@ -44,6 +44,7 @@ const { lat, lng } = req.query;
   try {
     // Call Google Maps API using axios
     const response = await axios.get(endpoint, { params });
+	console.log(response)
     // Return the response to the client
     return res.status(200).json(response.data);
   } catch (error) {
@@ -51,3 +52,4 @@ const { lat, lng } = req.query;
     return res.status(500).json({ error: 'Error calling Google Maps API' });
   }
 }
+

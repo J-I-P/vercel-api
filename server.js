@@ -1,28 +1,23 @@
-const jsonServer = require('json-server')
-const clone = require('clone')
-const data = require('./db.json')
+const express = require('express');
+const fs = require('fs');
+const path = require('path');
 
-const isProductionEnv = process.env.NODE_ENV === 'production';
-const server = jsonServer.create()
+const server = express();
+server.use(express.json()); // 允許解析 JSON 請求
 
-// For mocking the POST request, POST request won't make any changes to the DB in production environment
-const router = jsonServer.router(isProductionEnv ? clone(data) : 'db.json', {
-    _isFake: isProductionEnv
-})
-const middlewares = jsonServer.defaults()
+// 動態載入 /api 目錄下的 API 檔案
+const apiPath = path.join(__dirname, 'api');
+fs.readdirSync(apiPath).forEach((file) => {
+    if (file.endsWith('.js')) {
+        const route = `/api/${file.replace('.js', '')}`;
+        const apiHandler = require(path.join(apiPath, file));
+        server.use(route, apiHandler);
+    }
+});
 
-server.use(middlewares)
-
-// server.use((req, res, next) => {
-//     if (req.path !== '/')
-//         router.db.setState(clone(data))
-//     next()
-// })
-
-server.use(router)
+// 啟動伺服器
 server.listen(process.env.PORT || 3000, () => {
-    console.log('JSON Server is running')
-})
+    console.log('API Server is running');
+});
 
-// Export the Server API
-module.exports = server
+module.exports = server;

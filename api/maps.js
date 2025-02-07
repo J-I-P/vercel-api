@@ -26,6 +26,7 @@ export default async function handler(req, res) {
   }
 
   // 生成嵌入地圖的 URL
+  console.log(location)
   const embedUrl = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(location)}`;
 
   // 回傳嵌入地圖的 URL 給前端

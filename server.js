@@ -10,8 +10,18 @@ const apiPath = path.join(__dirname, 'api');
 fs.readdirSync(apiPath).forEach((file) => {
     if (file.endsWith('.js')) {
         const route = `/api/${file.replace('.js', '')}`;
-        const apiHandler = require(path.join(apiPath, file));
-        server.use(route, apiHandler);
+        const apiModule = require(path.join(apiPath, file));
+
+        // ✅ 支援 CommonJS (`module.exports`)
+        // ✅ 支援 ES6 (`export default`)
+        const apiHandler = apiModule.default || apiModule;
+
+        if (typeof apiHandler === 'function') {
+            server.use(route, apiHandler);
+            console.log(`✅ API ${route} 已載入`);
+        } else {
+            console.error(`❌ 無法載入 API: ${file}，請確保它是函數`);
+        }
     }
 });
 
